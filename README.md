@@ -94,6 +94,8 @@ python python/powerbi_prep.py
 
 4. Open `powerbi/rfm_dashboard_v2.pbix` in Power BI Desktop. If it asks for the data, point it to `dataset/powerbi_ready/`.
 
+> The SQLite database is included as `dataset/retail.zip`. Unzip it into `dataset/`, or recreate it with `python python/load_to_sqlite.py`.
+
 ---
 
 ## 6. Method
