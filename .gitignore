@@ -1,0 +1,4 @@
+dataset/raw_dataset/
+dataset/retail.db
+dataset/dataset_processed/clean_sales.csv
+__pycache__/

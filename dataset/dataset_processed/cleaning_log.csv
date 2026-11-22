@@ -1,0 +1,6 @@
+step,rows
+1. Raw rows (all files stacked),1067371
+2. After removing duplicate rows,1033036
+3. After removing cancellations,1013932
+4. After dropping missing CustomerID,779495
+5. After removing Quantity<=0 or UnitPrice<=0,779425

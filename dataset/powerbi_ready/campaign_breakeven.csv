@@ -1,0 +1,4 @@
+Scenario,BreakEvenResponseRate
+Conservative (1 order),0.0159379961702038
+Base (2 orders),0.0079689980851019
+Optimistic (3 orders),0.0053126653900679
