@@ -1,26 +1,23 @@
 from pathlib import Path
 import pandas as pd
 
-# ---------- 1. SETTINGS ----------
 PROJECT = Path(__file__).resolve().parent.parent
 DATA = PROJECT / "dataset" / "dataset_processed"
 
 TARGET_SEGMENT = "At Risk"
-YEARS_OBSERVED = 2.02          # 1 Dec 2009 to 9 Dec 2011
+YEARS_OBSERVED = 2.02         
 
-# ASSUMPTIONS (change these and re-run; they are not in the dataset)
-DISCOUNT = 0.10                # win-back offer: 10% off
-GROSS_MARGIN = 0.40            # profit as a share of list price BEFORE any discount (dataset has no cost data)
-COST_PER_CONTACT = 1.00        # GBP per customer contacted (email/SMS tool, handling)
-FIXED_COST = 500.00            # GBP one-off campaign cost (design, set-up)
-ORDERS_AFTER = {               # orders a reactivated customer places in the next 12 months
+DISCOUNT = 0.10                
+GROSS_MARGIN = 0.40            
+COST_PER_CONTACT = 1.00        
+FIXED_COST = 500.00            
+ORDERS_AFTER = {               
     "Conservative (1 order)": 1,
     "Base (2 orders)": 2,
     "Optimistic (3 orders)": 3,
 }
-RESPONSE_RATES = [r / 100 for r in range(1, 21)]      # 1% to 20%
+RESPONSE_RATES = [r / 100 for r in range(1, 21)]     
 
-# ---------- 2. LOAD THE TARGET SEGMENT ----------
 seg = pd.read_csv(DATA / "segment_summary.csv").set_index("Segment")
 n = int(seg.loc[TARGET_SEGMENT, "Customers"])
 aov = seg.loc[TARGET_SEGMENT, "AOV"]
@@ -28,9 +25,8 @@ past_spend = seg.loc[TARGET_SEGMENT, "Revenue"]
 annual_value_at_stake = past_spend / YEARS_OBSERVED
 
 total_cost = FIXED_COST + n * COST_PER_CONTACT
-profit_per_order = aov * (GROSS_MARGIN - DISCOUNT)    # list price x (margin - discount)
+profit_per_order = aov * (GROSS_MARGIN - DISCOUNT)    
 
-# ---------- 3. SCENARIOS ----------
 rows = []
 for name, orders in ORDERS_AFTER.items():
     for rate in RESPONSE_RATES:
@@ -45,7 +41,6 @@ for name, orders in ORDERS_AFTER.items():
                      "ROI": round(net_profit / total_cost, 2)})
 sim = pd.DataFrame(rows)
 
-# break-even response rate for each scenario
 be = []
 for name, orders in ORDERS_AFTER.items():
     be.append({"Scenario": name, "BreakEvenResponseRate": total_cost / (n * orders * profit_per_order)})
@@ -62,7 +57,6 @@ sim.to_csv(DATA / "campaign_sim.csv", index=False)
 breakeven.to_csv(DATA / "campaign_breakeven.csv", index=False)
 assumptions.to_csv(DATA / "campaign_assumptions.csv", index=False)
 
-# ---------- 4. PRINT ----------
 pd.set_option("display.width", 200)
 print(f"Target: {TARGET_SEGMENT} | customers: {n:,} | average order value: GBP {aov:,.0f}")
 print(f"Past spend of this segment: GBP {past_spend:,.0f} | roughly GBP {annual_value_at_stake:,.0f} per year at the historical rate")
